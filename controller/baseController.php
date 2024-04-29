@@ -132,6 +132,9 @@ class UserController extends BaseController
      * and hashed password
      * logic: comparing hashed input and hashed password on database
      */
+    public function login(string $username, string $password){
+
+    }
 
     /**
      * Function to update just neccessary data using array
@@ -207,8 +210,8 @@ class UserController extends BaseController
 
             $stmt->execute();
             return "Delete data success";
-        } catch (\Throwable $th) {
-            //throw $th;
+        } catch (\PDOException $e) {
+            die("Cannot delete data\t") . $e->getMessage();
         }
     }
     //SET THE SESSION USER_ID WITH ID, USER_NAME WITH NAME
@@ -216,45 +219,107 @@ class UserController extends BaseController
 
 class AdminController extends BaseController
 {
-    public function getAdmin()
+    public function login(string $name, string $password){
+
+    }
+    //SET THE SESSION ROLE TO ADMIN
+    //MAKE ADMIN DASH BOARD
+}
+
+class MovieController extends BaseController
+{
+    function getAllMovies()
     {
-        $sql = "SELECT * FROM tb_admin WHERE `status` = 1";
+        $sql = "SELECT * FROM tb_movie WHERE `status` = 1";
+        $res = $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
+    }
+
+    // Function to get movie data by name
+    function getMovieByName(string $name)
+    {
+        $sql = "SELECT * FROM tb_review WHERE `status`= 1 AND `title` = :name";
         try {
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute();
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $result;
+        $stmt->bindParam(':name', $name);
+        $stmt->execute();
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
         } catch (\PDOException $e) {
-            die("Cannot get users data from database\t") . $e->getLine();
+            die("Cannot get movies data\t") . $e->getMessage();
         }
     }
-    public function createAdmin(string $name, string $password)
-    {
-        $sql = "INSERT INTO tb_user(`admin_name`,`admin_email`,`status`) VALUES (:name,:password, 1)";
-        try {
-            $stmt = $this->pdo->prepare("SELECT * FROM tb_admin WHERE `admin_name` = :name");
-            $stmt->bindParam(':name', $name);
-            $stmt->execute();
-            $existingName = $stmt->fetch();
 
-            if ($existingName) {
-                return "Name already taken";
+    // Function to get movie data by year
+    function getMovieByYear(int $year, int $endYear = null)
+    {
+        $sql = "SELECT * FROM tb_review WHERE `status` = 1 ";
+
+        if($endYear !== null) {
+            $sql .= "AND WHERE `release_year` BETWEEN :year AND :endyear";
+        } else {
+            $sql .= "AND `release_year` = :year";
+        }
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':year', $year);
+            
+            if($endYear !== null){
+                $stmt->bindParam(":endyear",$endYear);
             }
 
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(":name", $name);
-            $stmt->bindParam(":password", $password);
             $stmt->execute();
-
-            return "Create new user success";
-
+                $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                return $res;
         } catch (\PDOException $e) {
-            die("Cannot create new admin\t") . $e->getLine();
+            die("Cannot get movies data\t") . $e->getMessage();
         }
     }
-    public function updateAdmin(int $id, array $updateData = [])
+
+    function getMoviesOrderByRating(bool $ascending = false)
     {
-        $sql = "UPDATE tb_admin SET ";
+        
+    }
+
+    // Function to get movie data order by popularity (high rating and many reviews)
+    function getMoviesOrderByPopularity()
+    {
+        // Implementasi kode untuk mengambil data film yang diurutkan berdasarkan popularitas
+    }
+
+    // Function to get movies data by genres
+    function getMoviesByGenres(array $genres)
+    {
+        // Implementasi kode untuk mengambil data film berdasarkan genre
+    }
+
+    // Function to insert movie data
+    function insertMovie(string $cover_link, string $trailer_link, string $title, string $director, string $release_year, int $duration, string $description, array $actors, array $genres)
+    {
+        $sql = "INSERT INTO tb_movie(`cover_link`,`trailer_link`,`title`,`director`,`release_year`,`duration`,`description`,`actors`,`genre`) VALUES (:cover_link, :trailer_link, :title, :director, :release_year, :duration, :description, :actors, :genres)";
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':cover_link', $cover_link);
+            $stmt->bindParam(':trailer_link', $trailer_link);
+            $stmt->bindParam(':title', $title);
+            $stmt->bindParam(':director', $director);
+            $stmt->bindParam(':release_year', $release_year);
+            $stmt->bindParam(':duration', $duration);
+            $stmt->bindParam(':description', $description);
+            $stmt->bindValue(':actors', implode(',', $actors)); // Actors disimpan sebagai string terpisah dengan koma
+            $stmt->bindValue(':genres', implode(',', $genres)); // Genre disimpan sebagai string terpisah dengan koma
+            $stmt->execute();
+            return "Successfully insert data";
+        } catch (\PDOException $e) {
+            die("Cannot insert movie data\t" . $e->getMessage());
+        }
+    }
+
+    // Function to update just necessary data using array
+    function updateMovie(int $id, array $updateData)
+    {
+        $sql = "UPDATE tb_movie SET ";
         try {
             $firstdata = true;
             $params = [];
@@ -274,137 +339,29 @@ class AdminController extends BaseController
             $stmt->execute($params);
             return "Update data success";
         } catch (\PDOException $e) {
-            die("Cannot update admin\t") . $e->getLine();
+            die("Cannot update movie\t") . $e->getMessage();
         }
-    }
-    public function deleteAdmin(array $based = [])
-    {
-        $sql = "UPDATE tb_admin SET `status` = 0 ";
-
-        $id = null;
-        $name = null;
-
-        foreach ($based as $key => $value) {
-            if (strtolower($key) === 'id') {
-                $id = $value;
-            }
-
-            if (strtolower($key) === 'name') {
-                $name = $value;
-            }
-        }
-
-        try {
-            if ($id === null) {
-                $sql .= "WHERE `admin_name` = :name";
-            }
-
-            if ($name === null) {
-                $sql .= "WHERE `id = :id";
-            }
-
-            $stmt = $this->pdo->prepare($sql);
-
-            if ($id !== null) {
-                $stmt->bindParam(":id", $id);
-            } else if ($name !== null) {
-                $stmt->bindParam(':name', $name);
-            } else {
-                return "ID and NAME cannot be empty or null";
-            }
-
-            $stmt->execute();
-            return "Delete data success";
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-    }
-    /**
-     * Function to login
-     * with sanitized name
-     * and hashed password
-     * logic: comparing hashed input and hashed password on database
-     */
-    //SET THE SESSION ROLE TO ADMIN
-    //MAKE ADMIN DASH BOARD
-}
-
-class MovieController extends BaseController
-{
-    // Function to get all movies data
-    function getAllMovies()
-    {
-        // Implementasi kode untuk mengambil semua data film
-    }
-
-    // Function to get movie data by name
-    function getMovieByName(string $name)
-    {
-        // Implementasi kode untuk mengambil data film berdasarkan nama
-    }
-
-    // Function to get movie data by year
-    function getMovieByYear(int $year)
-    {
-        // Implementasi kode untuk mengambil data film berdasarkan tahun
-    }
-
-    // Function to get movie data order by highest rating
-    function getMoviesOrderByHighestRating()
-    {
-        // Implementasi kode untuk mengambil data film yang diurutkan berdasarkan rating tertinggi
-    }
-
-    // Function to get movie data order by lowest rating
-    function getMoviesOrderByLowestRating()
-    {
-        // Implementasi kode untuk mengambil data film yang diurutkan berdasarkan rating terendah
-    }
-
-    // Function to get movie data order by popularity (high rating and many reviews)
-    function getMoviesOrderByPopularity()
-    {
-        // Implementasi kode untuk mengambil data film yang diurutkan berdasarkan popularitas
-    }
-
-    // Function to get movies data by genres
-    function getMoviesByGenres(array $genres)
-    {
-        // Implementasi kode untuk mengambil data film berdasarkan genre
-    }
-
-    // Function to insert movie data
-    function insertMovie(string $cover_link, string $trailer_link, string $title, string $director, string $release_date, int $duration, string $description, array $actors, array $genres)
-    {
-        $sql = "INSERT INTO tb_movie(`cover_link`,`trailer_link`,`title`,`director`,`release_date`,`duration`,`description`,`actors`,`genre`) VALUES (:cover_link, :trailer_link, :title, :director, :release_date, :duration, :description, :actors, :genres)";
-        try {
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(':cover_link', $cover_link);
-            $stmt->bindParam(':trailer_link', $trailer_link);
-            $stmt->bindParam(':title', $title);
-            $stmt->bindParam(':director', $director);
-            $stmt->bindParam(':release_date', $release_date);
-            $stmt->bindParam(':duration', $duration);
-            $stmt->bindParam(':description', $description);
-            $stmt->bindValue(':actors', implode(',', $actors)); // Actors disimpan sebagai string terpisah dengan koma
-            $stmt->bindValue(':genres', implode(',', $genres)); // Genre disimpan sebagai string terpisah dengan koma
-            $stmt->execute();
-            return "Successfully insert data";
-        } catch (\PDOException $e) {
-            die("Cannot insert movie data\t" . $e->getMessage());
-        }
-    }
-
-    // Function to update just necessary data using array
-    function updateMovie(array $data)
-    {
-        // Implementasi kode untuk memperbarui data film yang diperlukan
     }
 
     // Function to delete data with just set status to inactive or delete forever with reset auto increment
     function deleteMovie($movieId, $permanentDeletion = false)
     {
-        // Implementasi kode untuk menghapus data film dengan mengatur status menjadi tidak aktif atau menghapus secara permanen
+        $sql = "";
+
+        if($permanentDeletion === false) {
+            $sql = "UPDATE tb_movie SET `status` = 0 WHERE `id` = :id";
+        } else {
+            $sql = "DELETE FROM tb_movie WHERE `id` = :id";
+        }
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':id', $movieId);
+            $stmt->execute();
+            return "Delete data success";
+        } catch (\PDOException $e) {
+            die("Cannot delete movie data\t") . $e->getMessage();
+        }
     }
 }
 
@@ -412,7 +369,9 @@ class RatingController extends BaseController {
 
     // Function to get all ratings data
     function getAllRatings() {
-        // Implementasi kode untuk mengambil semua data rating
+        $sql = "SELECT * FROM tb_rating WHERE `status` = 1";
+        $res = $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
     }
 
     // Function to get rating data by user name
@@ -426,33 +385,80 @@ class RatingController extends BaseController {
     }
 
     // Function to create new rating with range 0.0 - 5.0
-    function createRating(string $userName, string $movieTitle, float $rating) {
-        // Implementasi kode untuk membuat rating baru
-        // Pastikan rating berada dalam rentang 0.0 - 5.0
+    function createRating(string $userId, string $movieId, float $rating) {
+        $sql = "INSERT INTO tb_rating(`user_id`,`movie_id`,`rating`) VALUES (:userId, :movieId, :rating)";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':userId',$userId);
+            $stmt->bindParam(':movieId',$movieId);
+            $stmt->bindParam(':rating',$rating);
+            $stmt->execute();
+            return "Successfuly create rating";
+        } catch (\PDOException $e) {
+            die("Cannot create new rating\t") . $e->getMessage();
+        }
     }
 
     // Function to update just necessary data using array
-    function updateRating(array $data) {
-        // Implementasi kode untuk memperbarui data rating yang diperlukan
+    function updateRating(int $id, array $updateData) {
+        $sql = "UPDATE tb_rating SET ";
+        try {
+            $firstdata = true;
+            $params = [];
+            foreach ($updateData as $col => $val) {
+                if ($firstdata) {
+                    $firstdata = false;
+                } else {
+                    $sql .= ", ";
+                }
+                $sql .= "`$col` = :$col";
+                $params[":$col"] = $val;
+            }
+            $sql .= " WHERE `id` = :id";
+            $params[':id'] = $id;
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            return "Update data success";
+        } catch (\PDOException $e) {
+            die("Cannot update movie\t") . $e->getMessage();
+        }
     }
 
     // Function to delete data with just set status to inactive or delete forever with reset auto increment
     function deleteRating($ratingId, $permanentDeletion = false) {
-        // Implementasi kode untuk menghapus data rating dengan mengatur status menjadi tidak aktif atau menghapus secara permanen
+        $sql = "";
+
+        if($permanentDeletion) {
+            $sql = "DELETE FROM tb_rating WHERE `id` = :id";
+        } else {
+            $sql = "UPDATE tb_rating SET `status` = 0 WHERE `id` = :id";
+        }
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':id', $ratingId);
+            $stmt->execute();
+            return "Delete data success";
+        } catch (\PDOException $e) {
+            die("Cannot delete movie data\t") . $e->getMessage();
+        }
     }
 }
 
 
-class ReviewController extends BaseController {
-
-    // Function to get all reviews data
+class ReviewController extends BaseController 
+{
     function getAllReviews() {
-        // Implementasi kode untuk mengambil semua data review
+        $sql = "SELECT * FROM tb_review WHERE `status` = 1";
+        $res = $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
     }
 
     // Function to get review data by user name
     function getReviewsByUserName(string $userName) {
-        // Implementasi kode untuk mengambil data review berdasarkan nama pengguna
+        
     }
 
     // Function to get review data by movie title
@@ -461,18 +467,65 @@ class ReviewController extends BaseController {
     }
 
     // Function to create new review
-    function createReview(string $userName, string $movieTitle, string $content) {
-        // Implementasi kode untuk membuat review baru
+    function createReview(string $userId, string $movieId, string $review) {
+        $sql = "INSERT INTO tb_review(`user_id`,`movie_id`,`review`) VALUES (:userId, :movieId, :review)";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':userId',$userId);
+            $stmt->bindParam(':movieId',$movieId);
+            $stmt->bindParam(':review',$review);
+            $stmt->execute();
+            return "Successfuly create rating";
+        } catch (\PDOException $e) {
+            die("Cannot create new review\t") . $e->getMessage();
+        }
     }
 
     // Function to update just necessary data using array
-    function updateReview(array $data) {
-        // Implementasi kode untuk memperbarui data review yang diperlukan
+    function updateReview(int $id, array $updateData) {
+        $sql = "UPDATE tb_review SET ";
+        try {
+            $firstdata = true;
+            $params = [];
+            foreach ($updateData as $col => $val) {
+                if ($firstdata) {
+                    $firstdata = false;
+                } else {
+                    $sql .= ", ";
+                }
+                $sql .= "`$col` = :$col";
+                $params[":$col"] = $val;
+            }
+            $sql .= " WHERE `id` = :id";
+            $params[':id'] = $id;
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            return "Update data success";
+        } catch (\PDOException $e) {
+            die("Cannot update movie\t") . $e->getMessage();
+        }
     }
 
     // Function to delete data with just set status to inactive or delete forever with reset auto increment
     function deleteReview($reviewId, $permanentDeletion = false) {
-        // Implementasi kode untuk menghapus data review dengan mengatur status menjadi tidak aktif atau menghapus secara permanen
+        $sql = "";
+
+        if($permanentDeletion !== false) {
+            $sql = "DELETE FROM tb_review WHERE `id` = :id";
+        } else {
+            $sql = "UPDATE tb_review SET `status` = 1 WHERE `id` = :id";
+        }
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':id', $reviewId);
+            $stmt->execute();
+            return "Delete data success";
+        } catch (\PDOException $e) {
+            die("Cannot delete movie data\t") . $e->getMessage();
+        }
     }
 }
 
