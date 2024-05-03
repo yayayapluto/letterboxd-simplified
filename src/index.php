@@ -1,3 +1,10 @@
+<?php
+require 'connect.php';
+if (isset($_SESSION['id'])) {
+    header('Location: index.php');
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -154,39 +161,48 @@
     <!--Login modal-->
     <dialog id="register" class="modal">
         <div class="modal-box">
-          <div class="container mx-auto place-items-center px-3 space-y-3">
-            <h1 class="text-lg">Get into A-Letter</h1>
-            <label class="form-control w-full max-w-xs gap-y-1">
-                <p class="label label-text font-semibold">Email Address</p>
-                <input type="text" class="input input-bordered w-full max-w-xs" />
-                <p class="label label-text font-semibold">Username</p>
-                <input type="text" class="input input-bordered w-full max-w-xs" />
-                <p class="label label-text font-semibold">Password</p>
-                <input type="text" class="input input-bordered w-full max-w-xs" />
-                <input type="submit" class="btn btn-success" value="okay">
-            </label>
-          </div>    
+            <div class="container mx-auto place-items-center px-3 space-y-3">
+                <h1 class="text-lg">Get into A-Letter</h1>
+                <form action="" autocomplete="off" method="post">
+                    <label class="form-control w-full max-w-xs gap-y-1">
+                        <p class="label label-text font-semibold">Email Address</p>
+                        <input type="email" class="input input-bordered w-full max-w-xs" name="email" />
+                        <p class="label label-text font-semibold">Username</p>
+                        <input type="text" class="input input-bordered w-full max-w-xs" name="username" />
+                    
+                        <p class="label label-text font-semibold">Password</p>
+                        <input type="password" class="input input-bordered w-full max-w-xs" name="password" />
+                       
+                        <input type="submit" class="btn btn-success" name="action" value="register">
+                        
+                    </label>
+                </form>
+
+            </div>
         </div>
         <form method="dialog" class="modal-backdrop">
-          <button>close</button>
+            <button>close</button>
         </form>
     </dialog>
 
     <dialog id="login" class="modal">
         <div class="modal-box">
-          <div class="container mx-auto place-items-center px-3 space-y-3">
-            <h1 class="text-lg">Get into A-Letter</h1>
-            <label class="form-control w-full max-w-xs gap-y-1">
-                <p class="label label-text font-semibold">Username</p>
-                <input type="text" class="input input-bordered w-full max-w-xs" />
-                <p class="label label-text font-semibold">Password</p>
-                <input type="text" class="input input-bordered w-full max-w-xs" />
-                <input type="submit" class="btn btn-success" value="get in">
-            </label>
-          </div>    
+            <div class="container mx-auto place-items-center px-3 space-y-3">
+                <h1 class="text-lg">Get into A-Letter</h1>
+                <form action="" autocomplete="off" method="post">
+                    <label class="form-control w-full max-w-xs gap-y-1">
+                        <p class="label label-text font-semibold">Username</p>
+                        <input type="text" class="input input-bordered w-full max-w-xs" name="username" />
+                        <p class="label label-text font-semibold">Password</p>
+                        <input type="text" class="input input-bordered w-full max-w-xs" name="password" />
+                        <input type="submit" class="btn btn-success" value="get in">
+                    </label>
+                </form>
+
+            </div>
         </div>
         <form method="dialog" class="modal-backdrop">
-          <button>close</button>
+            <button>close</button>
         </form>
     </dialog>
     <!--Login modal-->
