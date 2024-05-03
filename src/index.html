@@ -9,16 +9,16 @@
 </head>
 
 <body class="bg-neutral-900">
-    <div id="navbar" class="container mx-auto lg:px-10">
-        <div class="navbar bg-neutral-800">
+    <div id="navbar" class="container mx-auto px-5 md:px-7 lg:px-10">
+        <div class="navbar bg-transparent">
             <div class="flex-1">
                 <a class="btn btn-ghost text-lg md:text-xl lg:text-2xl">A-Letter</a>
             </div>
             <div class="flex-none">
                 <ul class="menu menu-horizontal px-1">
-                    <li><a href="" class="text-lg">Sign in</a></li>
-                    <li><a href="" class="text-lg">Create account</a></li>
-                    <li><a href="" class="text-lg">Films</a></li>
+                    <li><a onclick="login.showModal()" class="text-lg">Sign in</a></li>
+                    <li><a onclick="register.showModal()" class="text-lg">Create account</a></li>
+                    <li><a href="films_tiny.html" class="text-lg">Films</a></li>
                 </ul>
             </div>
         </div>
@@ -41,8 +41,8 @@
                 <img src="https://a.ltrbxd.com/resized/film-poster/8/4/2/3/0/1/842301-challengers-0-1000-0-1500-crop.jpg" alt="" class="rounded-lg">
             </div>
         </div>
-        <div id="new-movies">
-            <strong>New on A-Letter</strong>
+        <div id="high-rated-movies">
+            <strong>High rated movies</strong>
             <hr class="my-3">
             <div id="movies-list" class="w-full grid grid-cols-7 gap-x-2">
                 <img src="https://a.ltrbxd.com/resized/film-poster/8/4/2/3/0/1/842301-challengers-0-1000-0-1500-crop.jpg" alt="" class="rounded-lg">
@@ -150,6 +150,46 @@
             </div>
         </div>
     </div>
+
+    <!--Login modal-->
+    <dialog id="register" class="modal">
+        <div class="modal-box">
+          <div class="container mx-auto place-items-center px-3 space-y-3">
+            <h1 class="text-lg">Get into A-Letter</h1>
+            <label class="form-control w-full max-w-xs gap-y-1">
+                <p class="label label-text font-semibold">Email Address</p>
+                <input type="text" class="input input-bordered w-full max-w-xs" />
+                <p class="label label-text font-semibold">Username</p>
+                <input type="text" class="input input-bordered w-full max-w-xs" />
+                <p class="label label-text font-semibold">Password</p>
+                <input type="text" class="input input-bordered w-full max-w-xs" />
+                <input type="submit" class="btn btn-success" value="okay">
+            </label>
+          </div>    
+        </div>
+        <form method="dialog" class="modal-backdrop">
+          <button>close</button>
+        </form>
+    </dialog>
+
+    <dialog id="login" class="modal">
+        <div class="modal-box">
+          <div class="container mx-auto place-items-center px-3 space-y-3">
+            <h1 class="text-lg">Get into A-Letter</h1>
+            <label class="form-control w-full max-w-xs gap-y-1">
+                <p class="label label-text font-semibold">Username</p>
+                <input type="text" class="input input-bordered w-full max-w-xs" />
+                <p class="label label-text font-semibold">Password</p>
+                <input type="text" class="input input-bordered w-full max-w-xs" />
+                <input type="submit" class="btn btn-success" value="get in">
+            </label>
+          </div>    
+        </div>
+        <form method="dialog" class="modal-backdrop">
+          <button>close</button>
+        </form>
+    </dialog>
+    <!--Login modal-->
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
