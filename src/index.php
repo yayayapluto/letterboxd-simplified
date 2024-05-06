@@ -9,20 +9,9 @@
 </head>
 
 <body class="bg-neutral-900">
-    <div id="navbar" class="container mx-auto px-5 md:px-7 lg:px-10">
-        <div class="navbar bg-transparent">
-            <div class="flex-1">
-                <a class="btn btn-ghost text-lg md:text-xl lg:text-2xl">A-Letter</a>
-            </div>
-            <div class="flex-none">
-                <ul class="menu menu-horizontal px-1">
-                    <li><a onclick="login.showModal()" class="text-lg">Sign in</a></li>
-                    <li><a onclick="register.showModal()" class="text-lg">Create account</a></li>
-                    <li><a href="films_tiny.html" class="text-lg">Films</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    <header>
+    <?php include_once('./component/navbar.php') ?>
+    </header>
     <div id="main-content" class="container mx-auto grid grid-cols-1 gap-y-10 md:gap-y-16 lg:gap-y-20 px-10 md:px-20 lg:px-32 mt-5">
         <div id="random-huge-movie-cover" class="mx-auto">
             <img src="https://a.ltrbxd.com/resized/sm/upload/1v/t5/ny/lk/MV5BYWRmZWM2ZTktMzE1Ny00NmQyLWE3ZDItZTk5MjY5OGQ5NzdhXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_-1920-1920-1080-1080-crop-000000.jpg" alt="" class="rounded-md">
@@ -150,46 +139,6 @@
             </div>
         </div>
     </div>
-
-    <!--Login modal-->
-    <dialog id="register" class="modal">
-        <div class="modal-box">
-          <div class="container mx-auto place-items-center px-3 space-y-3">
-            <h1 class="text-lg">Get into A-Letter</h1>
-            <label class="form-control w-full max-w-xs gap-y-1">
-                <p class="label label-text font-semibold">Email Address</p>
-                <input type="text" class="input input-bordered w-full max-w-xs" />
-                <p class="label label-text font-semibold">Username</p>
-                <input type="text" class="input input-bordered w-full max-w-xs" />
-                <p class="label label-text font-semibold">Password</p>
-                <input type="text" class="input input-bordered w-full max-w-xs" />
-                <input type="submit" class="btn btn-success" value="okay">
-            </label>
-          </div>    
-        </div>
-        <form method="dialog" class="modal-backdrop">
-          <button>close</button>
-        </form>
-    </dialog>
-
-    <dialog id="login" class="modal">
-        <div class="modal-box">
-          <div class="container mx-auto place-items-center px-3 space-y-3">
-            <h1 class="text-lg">Get into A-Letter</h1>
-            <label class="form-control w-full max-w-xs gap-y-1">
-                <p class="label label-text font-semibold">Username</p>
-                <input type="text" class="input input-bordered w-full max-w-xs" />
-                <p class="label label-text font-semibold">Password</p>
-                <input type="text" class="input input-bordered w-full max-w-xs" />
-                <input type="submit" class="btn btn-success" value="get in">
-            </label>
-          </div>    
-        </div>
-        <form method="dialog" class="modal-backdrop">
-          <button>close</button>
-        </form>
-    </dialog>
-    <!--Login modal-->
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>

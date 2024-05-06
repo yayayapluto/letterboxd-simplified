@@ -133,7 +133,8 @@ class UserController extends BaseController
      * logic: comparing hashed input and hashed password on database
      */
     public function login(string $username, string $password){
-
+        //hash
+        //salt
     }
 
     /**
@@ -215,6 +216,10 @@ class UserController extends BaseController
         }
     }
     //SET THE SESSION USER_ID WITH ID, USER_NAME WITH NAME
+
+    //create session
+
+    //create hashing
 }
 
 class AdminController extends BaseController
@@ -446,7 +451,6 @@ class RatingController extends BaseController {
         }
     }
 }
-
 
 class ReviewController extends BaseController 
 {
